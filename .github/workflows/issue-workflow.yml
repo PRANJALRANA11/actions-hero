@@ -15,10 +15,10 @@ jobs:
 
       - name: Add a comment to the issue
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           COMMENT="Thank you for opening this issue! We will look into it."
           echo "Commenting on issue ${{ github.event.issue.number }}"
           curl -X POST "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments" \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Authorization: Bearer $PAT_TOKEN" \
             -d "{\"body\": \"$COMMENT\"}"
