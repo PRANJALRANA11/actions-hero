@@ -1,7 +1,9 @@
 name: issue created
+
 on:
   issues:
     types: [opened]
+    
 jobs:
   comment-on-issue:
     runs-on: ubuntu-latest
