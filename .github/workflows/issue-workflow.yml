@@ -1,24 +1,23 @@
-name: Comment on Issue
+name: issue created
 
 on:
   issues:
-    types:
-      - opened
+    types: [opened]
 
 jobs:
   comment-on-issue:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Add a comment to the issue
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          COMMENT="Thank you for opening this issue! We will look into it."
-          echo "Commenting on issue ${{ github.event.issue.number }}"
-          curl -X POST "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments" \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -d "{\"body\": \"$COMMENT\"}"
+      - name: "dump github context"
+        run: echo '${{ toJSON(github.event) }}' | jq
+  comment-with-api:
+     runs-on: ubuntu-latest
+     steps:
+       - name: create comment with api
+         run: |
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+          /repos/OWNER/REPO/issues/ISSUE_NUMBER/comments \
+          -f body='Me too' 
