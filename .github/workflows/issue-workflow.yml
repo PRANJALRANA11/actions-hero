@@ -1,0 +1,11 @@
+name: issue created
+on:
+  issues:
+    type: [opened]
+jobs:
+  comment-on-issue:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: "dump github context"
+        run:  echo  '${{toJSON(github.evevt) }}'  |  jq
+        shell: bash
