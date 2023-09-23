@@ -1,27 +1,24 @@
-name: issue created
+name: Comment on Issue
 
 on:
   issues:
-    types: [opened]
+    types:
+      - opened
 
 jobs:
   comment-on-issue:
     runs-on: ubuntu-latest
-    steps:
-      - name: "dump github context"
-        run: echo '${{ toJSON(github.event) }}' | jq
 
-  comment-with-api:
-    runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      ORGANISATION: ${{github.event.organisation.login}}
-      REPOSITORY: ${{ github.event.repository.name }}
-      ISSUE_NUMBER: ${{ github.event.issue.number }}
     steps:
-      - name: create comment with api
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Add a comment to the issue
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh api -X POST \
-            https://api.github.com/repo/${ORGANISATION}/${REPOSITORY}/issues/${ISSUE_NUMBER}/comments \
-            -f body='comment from api'
-
+          COMMENT="Thank you for opening this issue! We will look into it."
+          echo "Commenting on issue ${{ github.event.issue.number }}"
+          curl -X POST "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -d "{\"body\": \"$COMMENT\"}"
